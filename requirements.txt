@@ -1,0 +1,7 @@
+streamlit
+pandas
+geopandas
+matplotlib
+mapclassify
+openpyxl
+contextily
