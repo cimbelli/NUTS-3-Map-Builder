@@ -329,27 +329,29 @@ if file:
     fig, ax = plt.subplots(figsize=(8.27, 11.69))
 
     # Titolo della mappa
+    # Titolo della mappa dentro il riquadro
     titolo = st.text_input(T["map_title_label"], value="")
     
     if titolo.strip():
         prop = fm.FontProperties(family='DejaVu Sans', size=18)
         ax.text(
-            0.5,                      # centrato orizzontalmente
-            0.96,                     # posizione verticale dentro il riquadro
+            0.5,                       # centro orizzontale
+            0.96,                      # posizione sopra la mappa ma dentro il frame
             titolo,
             transform=ax.transAxes,
-            ha='center', va='top',
+            ha='center',
+            va='top',
             fontproperties=prop,
             color='black',
-            bbox=dict(
+            bbox=dict(                 # BOX NON arrotondato
                 facecolor='white',
-                alpha=0.7,
+                alpha=0.8,
                 edgecolor='black',
-                linewidth=1.0,
-                boxstyle='round,pad=0.4'
+                linewidth=1
             ),
             zorder=200
         )
+
     
     gdf_valid = gdf[gdf["classe"] != -1]
     gdf_nodata = gdf[gdf["classe"] == -1]
