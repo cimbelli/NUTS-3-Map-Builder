@@ -131,7 +131,7 @@ def format_value(val):
             .replace("X", ".")
         )
 
-
+# ======================================================================
 # Sidebar language selector
 selected_lang = st.sidebar.selectbox("Language / Lingua", [ "en", "it"])
 T = load_language(selected_lang)
@@ -231,6 +231,20 @@ if file:
 
     st.subheader(T["style_header"])
 
+
+
+
+
+# ======================================================================
+st.write("Count valori NON-NaN:", df[val_col].notna().sum())
+
+
+
+
+
+
+
+    
     palette_key = st.selectbox(
         T["color_scale_label"],
         options=list(colorbrewer_palettes.keys()),
