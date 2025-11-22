@@ -27,12 +27,7 @@
   "download_pdf_success": "PDF scaricato correttamente.",
   "download_png_success": "PNG scaricato correttamente.",
   "download_jpg_success": "JPG scaricato correttamente.",
-  "classification_methods": [
-    "Quantili",
-    "Intervalli uguali",
-    "Dev. Standard",
-    "Manuale"
-  ],
+  
   "colorbrewer_labels": {
     "Blues": "Blu monocromatico",
     "Greens": "Verde monocromatico",
@@ -51,6 +46,13 @@
     "YlGnBu": "Giallo-Verde-Blu",
     "YlOrBr": "Giallo-Arancio-Marrone",
     "YlOrRd": "Giallo-Arancio-Rosso"
+  },
+  
+  "classification_methods": {
+    "quantiles": "Quantili",
+    "equal": "Intervalli uguali",
+    "std": "Dev. Standard",
+    "manual": "Manuale"
   }
 }
 
