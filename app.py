@@ -334,7 +334,7 @@ if file:
         inset_gdf.plot(
             ax=ax,
             color="black",
-            linewidth=3,
+            linewidth=1,
             alpha=1.0,
         )
 
