@@ -238,7 +238,6 @@ if file:
 
     st.subheader(T["style_header"])
 
-   
     palette_key = st.selectbox(
         T["color_scale_label"],
         options=list(colorbrewer_palettes.keys()),
@@ -382,10 +381,12 @@ if file:
         )
     )
 
-    if method == manual_label:
+    if method_key == "manual":
+        # bounds già impostati manualmente
         bins = bounds[1:]
         min_val = bounds[0]
     else:
+        # calcoli automatici della classificazione
         bins = list(classifier.bins)
         min_val = round(gdf[val_col].min(), 2)
         bounds = [min_val] + [round(b, 2) for b in bins]
