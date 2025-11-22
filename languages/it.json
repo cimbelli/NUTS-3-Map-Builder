@@ -16,7 +16,7 @@
   "manual_limits_label": "Limiti (es: 1000, 2000, 3000)",
   "legend_checkbox_label": "Mostra legenda",
   "basemap_checkbox_label": "Mostra mappa di sfondo",
-  "map_title_label": "Titolo della mappa"
+  "map_title_label": "Titolo della mappa",
   "error_read_csv": "Errore nella lettura del CSV: {error}",
   "error_define_classes": "Errore nella definizione delle classi: {error}",
   "error_min_limits": "Servono almeno due valori per definire una classificazione.",
