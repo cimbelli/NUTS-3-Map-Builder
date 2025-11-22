@@ -106,11 +106,11 @@ if file:
     nuts_files = [
         f
         for f in os.listdir(layer_dir)
-        if f.startswith("nuts_") and f.endswith(".topojson")
+        if f.startswith("nuts3_") and f.endswith(".topojson")
     ]
 
     if not nuts_files:
-        st.error("No NUTS TopoJSON files found in /layer.")
+        st.error("No NUTS TopoJSON files found in /layers.")
         st.stop()
 
     available_years = sorted(
@@ -121,7 +121,7 @@ if file:
     )
 
     year = st.selectbox(T["year_label"], available_years)
-    nuts_path = os.path.join(layer_dir, f"nuts_{year}.topojson")
+    nuts_path = os.path.join(layer_dir, f"nuts3_{year}.topojson")
 
     inset_grid_path = os.path.join(layer_dir, "inset_grid.topojson")
 
