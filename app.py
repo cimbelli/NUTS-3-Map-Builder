@@ -17,6 +17,7 @@ from matplotlib import cm
 import contextily as cx
 from PIL import Image
 import numpy as np
+import re
 
 # Base dirs
 base_dir = os.path.dirname(__file__)
@@ -31,9 +32,80 @@ def load_language(lang_code: str) -> dict:
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
-def clean_nodata(df):
-    # sostituisce ":" con NaN in tutto il dataframe
-    return df.replace(":", np.nan).replace(" :", np.nan).replace(": ", np.nan)
+def clean_eurostat(df):
+    df = df.copy()
+    cols = df.columns.tolist()
+    dim_col = cols[0]  # non toccare dimension/freq/unit/geo
+
+    for col in cols[1:]:
+        def _clean(v):
+            if pd.isna(v):
+                return np.nan
+            v = str(v).strip()
+
+            # ":" oppure ": z", ": p", ": d"... → NaN
+            if v.startswith(":"):
+                return np.nan
+
+            # estrai SOLO la parte numerica, prima di eventuali flag
+            m = re.match(r"^([0-9\.,\-]+)", v)
+            if m:
+                return m.group(1)
+
+            return np.nan
+
+        df[col] = df[col].apply(_clean)
+
+        # converte virgola decimale → punto
+        df[col] = df[col].astype(str).str.replace(",", ".", regex=False)
+
+        # converte in float
+        df[col] = pd.to_numeric(df[col], errors="coerce")
+
+    return df
+
+def clean_generic(df):
+    df = df.copy()
+
+    # rimuove valori tipo ":", "-", "", " "
+    df = df.replace({":": np.nan, "-": np.nan, "": np.nan, " ": np.nan})
+
+    for col in df.columns:
+        # prova a convertire colonne che sembrano numeri
+        if df[col].dtype == object:
+            # normalizza virgole
+            df[col] = df[col].astype(str).str.replace(",", ".", regex=False)
+
+            # remove trailing flags (lettere dopo numeri)
+            df[col] = df[col].str.extract(r"([0-9.\-]+)", expand=False)
+
+            # tenta conversione a float
+            df[col] = pd.to_numeric(df[col], errors="ignore")
+
+    return df
+    
+def clean_auto(df):
+    eurostat_like = False
+
+    # Riconoscimento colonne Eurostat classiche
+    for col in df.columns:
+        if "TIME" in col.upper() or "GEO" in col.upper() or ":" in str(df[col].iloc[0]):
+            eurostat_like = True
+            break
+
+    # Riconoscimento valori Eurostat (":" e flag)
+    for col in df.columns:
+        if df[col].astype(str).str.startswith(":").any():
+            eurostat_like = True
+            break
+        if df[col].astype(str).str.contains(r"[0-9][ ]?[a-z]$").any():
+            eurostat_like = True
+            break
+
+    if eurostat_like:
+        return clean_eurostat(df)
+    else:
+        return clean_generic(df)
     
 def read_csv_with_sniffing(uploaded_file):
     try:
@@ -75,7 +147,7 @@ file = st.file_uploader(T["file_uploader_label"], type=["csv", "xlsx"])
 if file:
     if file.name.endswith(".csv"):
         df = read_csv_with_sniffing(file)
-        df = clean_nodata(df)
+        df = clean_auto(df)
     elif file.name.endswith(".xlsx"):
         xls = pd.ExcelFile(file)
         valid_sheets = [s for s in xls.sheet_names if not xls.parse(s).empty]
@@ -85,11 +157,11 @@ if file:
             st.stop()
         elif len(valid_sheets) == 1:
             df = xls.parse(valid_sheets[0])
-            df = clean_nodata(df)
+            df = clean_auto(df)
         else:
             selected_sheet = st.selectbox(T["sheet_select"], valid_sheets)
             df = xls.parse(selected_sheet)
-            df = clean_nodata(df)
+            df = clean_auto(df)
     else:
         st.error(T["unsupported_format"])
         st.stop()
