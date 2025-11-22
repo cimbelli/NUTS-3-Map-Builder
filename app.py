@@ -37,15 +37,21 @@ def clean_eurostat(df):
     cols = df2.columns.tolist()
 
     for col in cols:
-        if col.lower() == "geo":
-            continue  # mai toccare la colonna dei codici NUTS!
+        colname = str(col).lower()   # <-- FIX QUI
 
-        if col.lower() in ["freq", "unit", "obs_flag", "conf_status"]:
-            continue  # colonne descrittive, non numeriche
+        # non toccare la colonna GEO
+        if colname == "geo":
+            continue
 
+        # salta colonne descrittive
+        if colname in ["freq", "unit", "obs_flag", "conf_status"]:
+            continue
+
+        # se già numerica non toccare
         if df2[col].dtype != object:
-            continue  # già numerica, ok
+            continue
 
+        # pulizia valori
         def _clean(v):
             if pd.isna(v):
                 return np.nan
@@ -59,10 +65,10 @@ def clean_eurostat(df):
 
         df2[col] = df2[col].apply(_clean)
         df2[col] = df2[col].astype(str).str.replace(",", ".", regex=False)
-
         df2[col] = pd.to_numeric(df2[col], errors="coerce")
 
     return df2
+
 
 
 def clean_generic(df):
