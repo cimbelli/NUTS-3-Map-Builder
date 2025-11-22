@@ -1,5 +1,5 @@
 {
-  "title": "🗺️ Generatore di mappe comunali",
+  "title": "🗺️ Generatore di mappe NUTS-3",
   "intro_html": "<div style='color:#444; font-size:0.9em; margin-bottom:1em; line-height:1.6;'>Carica un file <strong>CSV</strong> o <strong>Excel</strong> contenente una colonna con <strong>codici territoriali</strong>, e una colonna numerica da visualizzare.<br><br>Dopo aver impostato i parametri di visualizzazione e classificazione, si genererà una <strong>mappa tematica scaricabile</strong> nei formati PDF, PNG o JPG.<br><br>Puoi anche caricare <strong>inset_grid.topojson</strong> per visualizzare la griglia degli inset (es. per territori ultraperiferici, isole o aree piccole da spostare su riquadri dedicati).</div>",
   "upload_label": "Carica un file CSV o Excel",
   "geocode_column": "Colonna con codici geografici (comuni)",
