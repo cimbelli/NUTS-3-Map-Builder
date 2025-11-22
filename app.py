@@ -16,6 +16,7 @@ from matplotlib.font_manager import FontProperties
 from matplotlib import cm
 import contextily as cx
 from PIL import Image
+import numpy as np
 
 # Base dirs
 base_dir = os.path.dirname(__file__)
