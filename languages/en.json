@@ -1,0 +1,16 @@
+{
+  "title": "🗺️ NUTS-3 map builder",
+  "intro_html": "<div style='color:#444; font-size:0.9em; margin-bottom:1em; line-height:1.6;'>Upload a <strong>CSV</strong> or <strong>Excel</strong> file containing a column with <strong>territorial codes</strong> and a numeric column to visualize.<br><br>After selecting the visualization and classification parameters, a <strong>downloadable thematic map</strong> (PDF, PNG, JPG) will be generated.<br><br>You can also load <strong>inset_grid.topojson</strong> to overlay the inset grid (useful for overseas territories, small islands or areas manually shifted into dedicated boxes).</div>",
+  "upload_label": "Upload a CSV or Excel file",
+  "geocode_column": "Column with municipality codes",
+  "values_column": "Column with values to display",
+  "year_label": "Reference year for municipal boundaries",
+  "customization_header": "Map customization",
+  "classification_method": "Classification method",
+  "limits_label": "Limits (e.g. 1000, 2000, 3000)",
+  "legend_label": "Show legend",
+  "basemap_label": "Show basemap",
+  "excel_empty_error": "The Excel file contains no sheets with data.",
+  "unsupported_format": "Unsupported file format.",
+  "data_preview": "Data preview:"
+}
