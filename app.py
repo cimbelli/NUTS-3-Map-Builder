@@ -231,20 +231,7 @@ if file:
 
     st.subheader(T["style_header"])
 
-
-
-
-
-# ======================================================================
-    st.write("Count valori NON-NaN:", df[val_col].notna().sum())
-
-
-
-
-
-
-
-    
+   
     palette_key = st.selectbox(
         T["color_scale_label"],
         options=list(colorbrewer_palettes.keys()),
@@ -254,66 +241,80 @@ if file:
         else 0,
     )
 
-    methods = T["classification_methods"]
-    method = st.selectbox(T["classification_method_label"], methods)
-    manual_label = methods[-1]
-
+    # Dizionario metodi: {"quantiles": "Quantili", ...}
+    methods_dict = T["classification_methods"]
+    
+    # Selectbox: mostrano le etichette tradotte, ritornano solo la chiave fissa
+    method_key = st.selectbox(
+        T["classification_method_label"],
+        options=list(methods_dict.keys()),
+        format_func=lambda k: methods_dict[k]
+    )
+    
+    # slider disabilitato se il metodo è "manual"
     k = st.slider(
         T["num_classes_label"],
         3,
         9,
         5,
-        disabled=(method == manual_label),
+        disabled=(method_key == "manual")
     )
-
+    
     if gdf_valid.empty:
+        st.error("No valid data available.")
         st.stop()
-
-    if method == manual_label:
+    
+    # --- CLASSIFICAZIONE ---
+    if method_key == "manual":
         raw_limits = st.text_input(T["manual_limits_label"])
         try:
             bounds = sorted(
-                [
-                    float(x.strip())
-                    for x in raw_limits.split(",")
-                    if x.strip() != ""
-                ]
+                float(x.strip())
+                for x in raw_limits.split(",")
+                if x.strip() != ""
             )
         except Exception as e:
             st.error(T["error_define_classes"].format(error=e))
             st.stop()
-
+    
         if len(bounds) < 2:
             st.error(T["error_min_limits"])
             st.stop()
-
+    
         if len(bounds) != len(set(bounds)):
             st.error(T["error_duplicates"])
             st.stop()
-
+    
         gdf_valid["classe"] = pd.cut(
             gdf_valid[val_col],
             bins=bounds,
             labels=False,
-            include_lowest=True,
+            include_lowest=True
         )
         k = len(bounds) - 1
+    
     else:
-        if method == methods[0]:
+        # metodo automatico
+        if method_key == "quantiles":
             classifier = mapclassify.Quantiles(gdf_valid[val_col], k=k)
-        elif method == methods[1]:
+    
+        elif method_key == "equal":
             classifier = mapclassify.EqualInterval(gdf_valid[val_col], k=k)
-        elif method == methods[2]:
+    
+        elif method_key == "std":
             classifier = mapclassify.StdMean(gdf_valid[val_col])
             k = len(classifier.bins)
+    
         gdf_valid["classe"] = classifier.yb
         bounds = [round(gdf_valid[val_col].min(), 2)] + [
             round(b, 2) for b in classifier.bins
         ]
-
+    
+    # applica classi a tutto il gdf
     gdf["classe"] = -1
     gdf.loc[gdf_valid.index, "classe"] = gdf_valid["classe"]
     color_nodata = "#D9D9D9"
+
 
     col_legend, col_basemap = st.columns(2)
     show_legend = col_legend.checkbox(T["legend_checkbox_label"], value=True)
