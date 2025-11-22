@@ -33,36 +33,37 @@ def load_language(lang_code: str) -> dict:
         return json.load(f)
 
 def clean_eurostat(df):
-    df = df.copy()
-    cols = df.columns.tolist()
-    dim_col = cols[0]  # non toccare dimension/freq/unit/geo
+    df2 = df.copy()
+    cols = df2.columns.tolist()
 
-    for col in cols[1:]:
+    for col in cols:
+        if col.lower() == "geo":
+            continue  # mai toccare la colonna dei codici NUTS!
+
+        if col.lower() in ["freq", "unit", "obs_flag", "conf_status"]:
+            continue  # colonne descrittive, non numeriche
+
+        if df2[col].dtype != object:
+            continue  # già numerica, ok
+
         def _clean(v):
             if pd.isna(v):
                 return np.nan
             v = str(v).strip()
-
-            # ":" oppure ": z", ": p", ": d"... → NaN
             if v.startswith(":"):
                 return np.nan
-
-            # estrai SOLO la parte numerica, prima di eventuali flag
             m = re.match(r"^([0-9\.,\-]+)", v)
             if m:
                 return m.group(1)
-
             return np.nan
 
-        df[col] = df[col].apply(_clean)
+        df2[col] = df2[col].apply(_clean)
+        df2[col] = df2[col].astype(str).str.replace(",", ".", regex=False)
 
-        # converte virgola decimale → punto
-        df[col] = df[col].astype(str).str.replace(",", ".", regex=False)
+        df2[col] = pd.to_numeric(df2[col], errors="coerce")
 
-        # converte in float
-        df[col] = pd.to_numeric(df[col], errors="coerce")
+    return df2
 
-    return df
 
 def clean_generic(df):
     df = df.copy()
