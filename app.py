@@ -330,16 +330,26 @@ if file:
 
     # Titolo della mappa
     titolo = st.text_input(T["map_title_label"], value="")
+    
     if titolo.strip():
-        prop = fm.FontProperties(family='DejaVu Sans', size=16)
+        prop = fm.FontProperties(family='DejaVu Sans', size=18)
         ax.text(
-            0.5, 1.02, titolo,
+            0.5,                      # centrato orizzontalmente
+            0.96,                     # posizione verticale dentro il riquadro
+            titolo,
             transform=ax.transAxes,
-            ha='center', va='bottom',
+            ha='center', va='top',
             fontproperties=prop,
-            bbox=dict(facecolor='white', alpha=0.7, edgecolor='black', linewidth=1)
+            color='black',
+            bbox=dict(
+                facecolor='white',
+                alpha=0.7,
+                edgecolor='black',
+                linewidth=1.0,
+                boxstyle='round,pad=0.4'
+            ),
+            zorder=200
         )
-
     
     gdf_valid = gdf[gdf["classe"] != -1]
     gdf_nodata = gdf[gdf["classe"] == -1]
