@@ -27,12 +27,7 @@
   "download_pdf_success": "PDF downloaded successfully.",
   "download_png_success": "PNG downloaded successfully.",
   "download_jpg_success": "JPG downloaded successfully.",
-  "classification_methods": [
-    "Quantiles",
-    "Equal intervals",
-    "Std deviation",
-    "Manual"
-  ],
+  
   "colorbrewer_labels": {
     "Blues": "Monochromatic Blue",
     "Greens": "Monochromatic Green",
@@ -51,5 +46,12 @@
     "YlGnBu": "Yellow-Green-Blue",
     "YlOrBr": "Yellow-Orange-Brown",
     "YlOrRd": "Yellow-Orange-Red"
+  },
+
+  "classification_methods": {
+    "quantiles": "Quantiles",
+    "equal": "Equal intervals",
+    "std": "Std deviation",
+    "manual": "Manual"
   }
 }
