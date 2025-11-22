@@ -57,7 +57,7 @@ def format_value(val):
 
 
 # Sidebar language selector
-selected_lang = st.sidebar.selectbox("Language / Lingua", ["it", "en"])
+selected_lang = st.sidebar.selectbox("Language / Lingua", [ "en", "it"])
 T = load_language(selected_lang)
 
 # Color palettes from language file
