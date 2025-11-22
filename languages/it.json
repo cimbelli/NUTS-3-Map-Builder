@@ -27,3 +27,23 @@
   "download_png": "🖼️ Scarica mappa in PNG",
   "download_jpg": "🖼️ Scarica mappa in JPG"
 }
+
+"colorbrewer_labels": {
+    "Blues": "Blu monocromatico",
+    "Greens": "Verde monocromatico",
+    "Oranges": "Arancione monocromatico",
+    "Purples": "Viola monocromatico",
+    "Reds": "Rosso monocromatico",
+    "BuGn": "Blu-Verde",
+    "BuPu": "Blu-Viola",
+    "GnBu": "Verde-Blu",
+    "OrRd": "Arancio-Rosso",
+    "PuBu": "Viola-Blu",
+    "PuBuGn": "Viola-Blu-Verde",
+    "PuRd": "Viola-Rosso",
+    "RdPu": "Rosso-Viola",
+    "YlGn": "Giallo-Verde",
+    "YlGnBu": "Giallo-Verde-Blu",
+    "YlOrBr": "Giallo-Arancio-Marrone",
+    "YlOrRd": "Giallo-Arancio-Rosso"
+}
