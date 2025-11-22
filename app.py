@@ -30,7 +30,10 @@ def load_language(lang_code: str) -> dict:
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
-
+def clean_nodata(df):
+    # sostituisce ":" con NaN in tutto il dataframe
+    return df.replace(":", np.nan).replace(" :", np.nan).replace(": ", np.nan)
+    
 def read_csv_with_sniffing(uploaded_file):
     try:
         sample = uploaded_file.read(2048).decode("utf-8")
@@ -71,6 +74,7 @@ file = st.file_uploader(T["file_uploader_label"], type=["csv", "xlsx"])
 if file:
     if file.name.endswith(".csv"):
         df = read_csv_with_sniffing(file)
+        df = clean_nodata(df)
     elif file.name.endswith(".xlsx"):
         xls = pd.ExcelFile(file)
         valid_sheets = [s for s in xls.sheet_names if not xls.parse(s).empty]
@@ -80,9 +84,11 @@ if file:
             st.stop()
         elif len(valid_sheets) == 1:
             df = xls.parse(valid_sheets[0])
+            df = clean_nodata(df)
         else:
             selected_sheet = st.selectbox(T["sheet_select"], valid_sheets)
             df = xls.parse(selected_sheet)
+            df = clean_nodata(df)
     else:
         st.error(T["unsupported_format"])
         st.stop()
