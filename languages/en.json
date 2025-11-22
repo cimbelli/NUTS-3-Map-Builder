@@ -16,6 +16,7 @@
   "manual_limits_label": "Bounds (e.g. 1000, 2000, 3000)",
   "legend_checkbox_label": "Show legend",
   "basemap_checkbox_label": "Show basemap",
+  "map_title_label": "Map title",
   "error_read_csv": "Error reading CSV: {error}",
   "error_define_classes": "Error defining classes: {error}",
   "error_min_limits": "At least two values are required to define a classification.",
