@@ -236,7 +236,7 @@ if file:
 
 
 # ======================================================================
-st.write("Count valori NON-NaN:", df[val_col].notna().sum())
+    st.write("Count valori NON-NaN:", df[val_col].notna().sum())
 
 
 
