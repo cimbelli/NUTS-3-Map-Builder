@@ -327,6 +327,20 @@ if file:
     show_basemap = col_basemap.checkbox(T["basemap_checkbox_label"], value=True)
 
     fig, ax = plt.subplots(figsize=(8.27, 11.69))
+
+    # Titolo della mappa
+    titolo = st.text_input(T["map_title_label"], value="")
+    if titolo.strip():
+        prop = fm.FontProperties(family='DejaVu Sans', size=16)
+        ax.text(
+            0.5, 1.02, titolo,
+            transform=ax.transAxes,
+            ha='center', va='bottom',
+            fontproperties=prop,
+            bbox=dict(facecolor='white', alpha=0.7, edgecolor='black', linewidth=1)
+        )
+
+    
     gdf_valid = gdf[gdf["classe"] != -1]
     gdf_nodata = gdf[gdf["classe"] == -1]
 
