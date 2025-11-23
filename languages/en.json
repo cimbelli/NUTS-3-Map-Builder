@@ -53,7 +53,7 @@
   "classification_methods": {
     "quantiles": "Quantiles",
     "equal": "Equal intervals",
-    "natural": "Natural breaks",
+    "natural": "Natural breaks (Jenks)",
     "std": "Std deviation",
     "manual": "Manual"
   }
