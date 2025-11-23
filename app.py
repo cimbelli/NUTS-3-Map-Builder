@@ -256,6 +256,21 @@ if file:
             st.error("Colonna GEO (Codes) non trovata dopo parsing.")
             st.stop()
 
+    # Prova a leggere il titolo dal foglio Summary
+        excel_title = None
+        try:
+            summary_df = pd.read_excel(file, sheet_name="Summary", header=None)
+            # Cerca la prima cella non-nan che contiene testo lungo
+            for val in summary_df[0].dropna():
+                if isinstance(val, str) and len(val) > 15:
+                    excel_title = val.strip()
+                    break
+        except Exception:
+            pass
+        
+        # Se trovato, usalo come titolo predefinito
+        titolo_preimpostato = excel_title if excel_title else ""
+
 
     else:
         st.error(T["unsupported_format"])
@@ -418,7 +433,9 @@ if file:
 
     # Titolo della mappa
     # Titolo della mappa dentro il riquadro
-    titolo = st.text_input(T["map_title_label"], value="")
+    #titolo = st.text_input(T["map_title_label"], value="")
+    titolo = st.text_input(T["map_title_label"], value=titolo_preimpostato)
+
     
     if titolo.strip():
         prop = fm.FontProperties(family='DejaVu Sans', size=18)
