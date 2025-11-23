@@ -318,7 +318,7 @@ if file:
     year = st.selectbox(T["year_label"], available_years)
     nuts_path = os.path.join(layer_dir, f"nuts3_{year}.topojson")
 
-    inset_grid_path = os.path.join(layer_dir, "inset_grid.topojson")
+    inset_grid_path = os.path.join(layer_dir, "inset_polygons.topojson")
 
     nuts_code_col = "NUTS_ID"
 
@@ -474,6 +474,7 @@ if file:
         inset_gdf.plot(
             ax=ax,
             color="black",
+            facecolor="white",
             linewidth=1,
             alpha=1.0,
         )
