@@ -517,12 +517,10 @@ if file:
         total_rows = num_classes + (1 if has_nodata else 0)
     
         # altezza proporzionale al numero di righe
-        legend_height = 0.045 * total_rows
+        legend_height = 0.04 * total_rows
         top_y = 0.60
     
-        legend_ax = ax.inset_axes(
-            [0.80, top_y - legend_height, 0.18, legend_height]
-        )
+        legend_ax = ax.inset_axes([0.80, top_y - legend_height, 0.18, legend_height])
         legend_ax.axis("off")
     
         # sfondo
@@ -552,7 +550,7 @@ if file:
     
             legend_ax.add_patch(
                 Rectangle(
-                    (0.2, row_y + 0.2),
+                    (0.2, row_y -1 + 0.2),
                     0.7,
                     0.6,
                     facecolor=color,
