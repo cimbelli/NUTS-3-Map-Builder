@@ -419,9 +419,9 @@ if file:
 
     if show_legend:
         legend_height = 0.025 * (k + 1)
-        top_y = 0.75
+        top_y = 0.65
         legend_ax = ax.inset_axes(
-            [0.75, top_y - legend_height, 0.22, legend_height]
+            [0.80, top_y - legend_height, 0.18, legend_height]
         )
         legend_ax.axis("off")
         legend_ax.add_patch(
