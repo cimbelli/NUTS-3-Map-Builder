@@ -163,45 +163,60 @@ if file:
     elif file.name.endswith(".xlsx"):
         xls = pd.ExcelFile(file)
     
-        # Eurostat usa "Sheet 1" nei nuovi file
+        # Foglio dati Eurostat
         if "Sheet 1" in xls.sheet_names:
             sheet_name = "Sheet 1"
         else:
-            # fallback: primo foglio con dati
-            sheet_name = [
-                s for s in xls.sheet_names
-                if not xls.parse(s).empty
-            ][-1]
+            sheet_name = xls.sheet_names[0]
     
-        # Leggiamo tutto il foglio senza header
-        raw_df = xls.parse(sheet_name, header=None)
+        # Leggi tutto senza header
+        raw = pd.read_excel(file, sheet_name=sheet_name, header=None)
     
-        # Trova la riga con "GEO (Codes)"
-        header_row = None
-        for i, row in raw_df.iterrows():
+        # 1) Trova la riga con "GEO (Codes)"
+        geo_row = None
+        for i, row in raw.iterrows():
             if row.astype(str).str.contains("GEO", case=False).any():
                 if row.astype(str).str.contains("Code", case=False).any():
-                    header_row = i
+                    geo_row = i
                     break
     
-        if header_row is None:
-            st.error("Formato Excel Eurostat non riconosciuto: impossibile trovare la riga di intestazione con i codici GEO.")
+        if geo_row is None:
+            st.error("Formato Excel non riconosciuto: nessuna riga GEO (Codes).")
             st.stop()
     
-        # Ora leggiamo il foglio con l’header corretto
-        df = pd.read_excel(file, sheet_name=sheet_name, header=header_row)
+        # 2) La riga precedente contiene gli anni (TIME)
+        years_row = geo_row - 1
     
-        # cleanup Eurostat
+        # 3) Crea header combinato
+        header = []
+        for a, b in zip(raw.iloc[geo_row], raw.iloc[years_row]):
+            # Se GEO (Codes) / GEO (Labels)
+            if "GEO" in str(a):
+                header.append(str(a).strip())
+            else:
+                # Se la riga GEO è vuota ma la riga sopra contiene l’anno → usa anno
+                header.append(str(b).strip())
+    
+        # 4) Leggi tabella da geo_row+1 in poi
+        df = pd.read_excel(
+            file,
+            sheet_name=sheet_name,
+            header=None,
+            skiprows=geo_row + 1
+        )
+    
+        # 5) Applica header corretto
+        df.columns = header[:len(df.columns)]
+    
+        # 6) Pulizia Eurostat (non tocca GEO)
         df = clean_auto(df)
     
-        # Eurostat: la colonna dei codici è sempre questa
+        # 7) Colonna dei codici = GEO (Codes)
         if "GEO (Codes)" in df.columns:
             cod_col = "GEO (Codes)"
         else:
-            st.error("Colonna 'GEO (Codes)' non trovata.")
+            st.error("Colonna GEO (Codes) non trovata dopo parsing.")
             st.stop()
-    
-        df[cod_col] = df[cod_col].astype(str).str.strip()
 
 
     else:
