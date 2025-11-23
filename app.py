@@ -418,7 +418,7 @@ if file:
         bounds = [min_val] + [round(b, 2) for b in bins]
 
     if show_legend:
-        legend_height = 0.025 * (k + 1)
+        legend_height = 0.026 * (k + 1)
         top_y = 0.60
         legend_ax = ax.inset_axes(
             [0.80, top_y - legend_height, 0.18, legend_height]
