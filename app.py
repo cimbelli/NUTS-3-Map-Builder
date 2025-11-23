@@ -236,6 +236,10 @@ if file:
     
         # 5) Applica header corretto
         df.columns = header[:len(df.columns)]
+
+        # Rimuove colonne duplicate mantenendo la PRIMA occorrenza
+        df = df.loc[:, ~df.columns.duplicated()]        
+       
         # Rimuovi colonne senza nome o invalide
         df = df.loc[:, df.columns.notna()]
         df = df.loc[:, df.columns.astype(str).str.strip() != ""]
