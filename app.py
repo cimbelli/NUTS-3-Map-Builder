@@ -551,7 +551,7 @@ if file:
     
             legend_ax.add_patch(
                 Rectangle(
-                    (0.2, row_y -1 + 0.2),
+                    (0.2, row_y + 0.2),
                     0.7,
                     0.6,
                     facecolor=color,
