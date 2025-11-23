@@ -473,11 +473,24 @@ if file:
     if inset_gdf is not None and not inset_gdf.empty:
         inset_gdf.plot(
             ax=ax,
-            color="lightgray",
+            color="whitesmoke",
             edgecolor="black",
-            linewidth=1,
+            linewidth=0.3,
             alpha=1.0,
         )
+        for _, row in inset_gdf.iterrows():
+            minx, miny, maxx, maxy = row.geometry.bounds
+    
+            ax.text(
+                minx + 5000,
+                maxy - 5000,
+                row.get("name", ""),
+                ha="left",
+                va="top",
+                fontsize=6,
+                color="black",
+                zorder=5,
+            )
 
     gdf_valid.plot(
         column="classe",
