@@ -163,34 +163,46 @@ if file:
     elif file.name.endswith(".xlsx"):
         xls = pd.ExcelFile(file)
     
-        # 1. Se c'è Sheet1, usalo (Eurostat usa sempre questo per i dati)
-        sheet_name = "Sheet1" if "Sheet1" in xls.sheet_names else xls.sheet_names[0]
+        # Eurostat usa "Sheet 1" nei nuovi file
+        if "Sheet 1" in xls.sheet_names:
+            sheet_name = "Sheet 1"
+        else:
+            # fallback: primo foglio con dati
+            sheet_name = [
+                s for s in xls.sheet_names
+                if not xls.parse(s).empty
+            ][-1]
     
+        # Leggiamo tutto il foglio senza header
         raw_df = xls.parse(sheet_name, header=None)
     
-        # 2. Trova la riga che contiene "GEO (Codes)" → inizia la tabella
+        # Trova la riga con "GEO (Codes)"
         header_row = None
         for i, row in raw_df.iterrows():
-            if row.astype(str).str.contains("GEO (Codes)").any():
-                header_row = i
-                break
+            if row.astype(str).str.contains("GEO", case=False).any():
+                if row.astype(str).str.contains("Code", case=False).any():
+                    header_row = i
+                    break
     
         if header_row is None:
-            st.error("Formato Eurostat non riconosciuto: impossibile trovare 'GEO (Codes)'.")
+            st.error("Formato Excel Eurostat non riconosciuto: impossibile trovare la riga di intestazione con i codici GEO.")
             st.stop()
     
-        # 3. Estrarre la tabella vera a partire dalla riga di intestazione
+        # Ora leggiamo il foglio con l’header corretto
         df = pd.read_excel(file, sheet_name=sheet_name, header=header_row)
     
-        # 4. Pulisci i valori ma NON la colonna GEO
+        # cleanup Eurostat
         df = clean_auto(df)
     
-        # 5. Usa automaticamente la colonna GEO (Codes)
+        # Eurostat: la colonna dei codici è sempre questa
         if "GEO (Codes)" in df.columns:
             cod_col = "GEO (Codes)"
         else:
-            st.error("Colonna 'GEO (Codes)' mancante nei dati.")
+            st.error("Colonna 'GEO (Codes)' non trovata.")
             st.stop()
+    
+        df[cod_col] = df[cod_col].astype(str).str.strip()
+
 
     else:
         st.error(T["unsupported_format"])
