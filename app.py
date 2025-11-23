@@ -259,16 +259,19 @@ if file:
     # Prova a leggere il titolo dal foglio Summary
         excel_title = None
         try:
-            summary_df = pd.read_excel(file, sheet_name="Summary", header=None)
-            # Cerca la prima cella non-nan che contiene testo lungo
-            for val in summary_df[0].dropna():
-                if isinstance(val, str) and len(val) > 15:
-                    excel_title = val.strip()
+            df_raw = pd.read_excel(file, sheet_name="Sheet 1", header=None)
+        
+            for i in range(0, 10):  # cerca nelle prime 10 righe
+                row = df_raw.iloc[i, 0]
+                if isinstance(row, str) and "Dataset" in row:
+                    # Il titolo è nella seconda colonna (colonna 1)
+                    if isinstance(df_raw.iloc[i, 1], str) and df_raw.iloc[i, 1].strip() != "":
+                        excel_title = df_raw.iloc[i, 1].strip()
                     break
         except Exception:
             pass
         
-        # Se trovato, usalo come titolo predefinito
+        # Titolo precompilato
         titolo_preimpostato = excel_title if excel_title else ""
 
 
