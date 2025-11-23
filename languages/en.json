@@ -28,6 +28,7 @@
   "download_pdf_success": "PDF downloaded successfully.",
   "download_png_success": "PNG downloaded successfully.",
   "download_jpg_success": "JPG downloaded successfully.",
+  "legend_nodata": "No data",
   
   "colorbrewer_labels": {
     "Blues": "Monochromatic Blue",
