@@ -37,34 +37,63 @@ def clean_eurostat(df):
     cols = df2.columns.tolist()
 
     for col in cols:
-        colname = str(col).lower()   # <-- FIX QUI
 
-        # non toccare la colonna GEO
-        if colname == "geo":
+        # ---- 1. Ignora colonne invalide ----
+        if col is None:
             continue
 
-        # salta colonne descrittive
-        if colname in ["freq", "unit", "obs_flag", "conf_status"]:
+        colname = str(col).strip()
+        colname_lower = colname.lower()
+
+        # colonne vuote, "nan", None → skip
+        if colname == "" or colname_lower == "nan":
             continue
 
-        # se già numerica non toccare
-        if df2[col].dtype != object:
+        # ---- 2. Non toccare colonne GEO (codici territoriali) ----
+        # gestisce:
+        # - geo
+        # - GEO
+        # - GEO (Codes)
+        # - Codici GEO
+        # - Variante internazionale
+        if "geo" in colname_lower:
             continue
 
-        # pulizia valori
+        # ---- 3. Non toccare colonne descrittive / non numeriche Eurostat ----
+        if any(key in colname_lower for key in ["freq", "unit", "flag", "status"]):
+            continue
+
+        # ---- 4. Se la colonna è già numerica → lascia stare ----
+        try:
+            if df2[col].dtype != object:
+                continue
+        except Exception:
+            continue
+
+        # ---- 5. Pulizia valori Eurostat ----
         def _clean(v):
             if pd.isna(v):
                 return np.nan
+
             v = str(v).strip()
+
+            # Eurostat NoData
             if v.startswith(":"):
                 return np.nan
+
+            # Estrae solo la parte numerica: "101.6 e" → "101.6"
             m = re.match(r"^([0-9\.,\-]+)", v)
             if m:
                 return m.group(1)
+
             return np.nan
 
         df2[col] = df2[col].apply(_clean)
+
+        # Converte virgola → punto
         df2[col] = df2[col].astype(str).str.replace(",", ".", regex=False)
+
+        # Converti in float
         df2[col] = pd.to_numeric(df2[col], errors="coerce")
 
     return df2
@@ -207,6 +236,11 @@ if file:
     
         # 5) Applica header corretto
         df.columns = header[:len(df.columns)]
+        # Rimuovi colonne senza nome o invalide
+        df = df.loc[:, df.columns.notna()]
+        df = df.loc[:, df.columns.astype(str).str.strip() != ""]
+
+        
     
         # 6) Pulizia Eurostat (non tocca GEO)
         df = clean_auto(df)
