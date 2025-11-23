@@ -53,7 +53,7 @@
   "classification_methods": {
     "quantiles": "Quantili",
     "equal": "Intervalli uguali",
-    "natural": "Intervalli naturali",
+    "natural": "Intervalli naturali (Jenks)",
     "std": "Dev. Standard",
     "manual": "Manuale"
   }
