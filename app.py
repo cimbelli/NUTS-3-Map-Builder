@@ -543,7 +543,8 @@ if file:
         cmap = cm.get_cmap(palette_key, num_classes)
     
         for i in range(num_classes):
-            row_y = total_rows - (i + (1 if has_nodata else 0)) - 1
+            #row_y = total_rows - (i + (1 if has_nodata else 0)) - 1
+            row_y = total_rows - 1 - i
     
             color = to_hex(cmap(i))
             label_text = f"{format_value(bounds[i])} – {format_value(bounds[i+1])}"
