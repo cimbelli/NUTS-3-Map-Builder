@@ -474,7 +474,7 @@ if file:
         inset_gdf.plot(
             ax=ax,
             color="white",
-            edgecolor="white",
+            edgecolor="black",
             linewidth=1,
             alpha=1.0,
         )
