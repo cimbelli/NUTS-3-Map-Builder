@@ -267,6 +267,7 @@ if file:
                     # Il titolo è nella seconda colonna (colonna 1)
                     if isinstance(df_raw.iloc[i, 1], str) and df_raw.iloc[i, 1].strip() != "":
                         excel_title = df_raw.iloc[i, 1].strip()
+                        excel_title = re.sub(r"\s*\([^)]*\)", "", excel_title).strip()
                     break
         except Exception:
             pass
@@ -441,7 +442,7 @@ if file:
 
     
     if titolo.strip():
-        prop = fm.FontProperties(family='DejaVu Sans', size=18)
+        prop = fm.FontProperties(family='DejaVu Sans', size=14)
         ax.text(
             0.5,                       # centro orizzontale
             0.96,                      # posizione sopra la mappa ma dentro il frame
