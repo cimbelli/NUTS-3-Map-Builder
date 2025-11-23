@@ -149,11 +149,16 @@ colorbrewer_palettes = T["colorbrewer_labels"]
 st.title(T["title"])
 st.markdown(T["intro_html"], unsafe_allow_html=True)
 
-file = st.file_uploader(T["file_uploader_label"], type=["csv", "xlsx"])
+#file = st.file_uploader(T["file_uploader_label"], type=["csv", "xlsx"])
+file = st.file_uploader(T["file_uploader_label"], type=["csv", "xlsx", "tsv"])
+
 
 if file:
     if file.name.endswith(".csv"):
         df = read_csv_with_sniffing(file)
+        df = clean_auto(df)
+    elif file.name.endswith(".tsv"):
+        df = pd.read_csv(file, sep="\t", dtype=str)
         df = clean_auto(df)
     elif file.name.endswith(".xlsx"):
         xls = pd.ExcelFile(file)
