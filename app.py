@@ -160,7 +160,7 @@ if file:
     elif file.name.endswith(".tsv"):
         df = pd.read_csv(file, sep="\t", dtype=str)
         df = clean_auto(df)
-     elif file.name.endswith(".xlsx"):
+    elif file.name.endswith(".xlsx"):
         xls = pd.ExcelFile(file)
     
         # 1. Se c'è Sheet1, usalo (Eurostat usa sempre questo per i dati)
