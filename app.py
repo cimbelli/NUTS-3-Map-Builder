@@ -160,20 +160,38 @@ if file:
     elif file.name.endswith(".tsv"):
         df = pd.read_csv(file, sep="\t", dtype=str)
         df = clean_auto(df)
-    elif file.name.endswith(".xlsx"):
+     elif file.name.endswith(".xlsx"):
         xls = pd.ExcelFile(file)
-        valid_sheets = [s for s in xls.sheet_names if not xls.parse(s).empty]
-
-        if len(valid_sheets) == 0:
-            st.error(T["excel_no_data"])
+    
+        # 1. Se c'è Sheet1, usalo (Eurostat usa sempre questo per i dati)
+        sheet_name = "Sheet1" if "Sheet1" in xls.sheet_names else xls.sheet_names[0]
+    
+        raw_df = xls.parse(sheet_name, header=None)
+    
+        # 2. Trova la riga che contiene "GEO (Codes)" → inizia la tabella
+        header_row = None
+        for i, row in raw_df.iterrows():
+            if row.astype(str).str.contains("GEO (Codes)").any():
+                header_row = i
+                break
+    
+        if header_row is None:
+            st.error("Formato Eurostat non riconosciuto: impossibile trovare 'GEO (Codes)'.")
             st.stop()
-        elif len(valid_sheets) == 1:
-            df = xls.parse(valid_sheets[0])
-            df = clean_auto(df)
+    
+        # 3. Estrarre la tabella vera a partire dalla riga di intestazione
+        df = pd.read_excel(file, sheet_name=sheet_name, header=header_row)
+    
+        # 4. Pulisci i valori ma NON la colonna GEO
+        df = clean_auto(df)
+    
+        # 5. Usa automaticamente la colonna GEO (Codes)
+        if "GEO (Codes)" in df.columns:
+            cod_col = "GEO (Codes)"
         else:
-            selected_sheet = st.selectbox(T["sheet_select"], valid_sheets)
-            df = xls.parse(selected_sheet)
-            df = clean_auto(df)
+            st.error("Colonna 'GEO (Codes)' mancante nei dati.")
+            st.stop()
+
     else:
         st.error(T["unsupported_format"])
         st.stop()
