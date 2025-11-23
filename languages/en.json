@@ -53,6 +53,7 @@
   "classification_methods": {
     "quantiles": "Quantiles",
     "equal": "Equal intervals",
+    "pretty": "Pretty breaks",
     "std": "Std deviation",
     "manual": "Manual"
   }
