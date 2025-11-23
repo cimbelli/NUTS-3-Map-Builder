@@ -28,6 +28,7 @@
   "download_pdf_success": "PDF scaricato correttamente.",
   "download_png_success": "PNG scaricato correttamente.",
   "download_jpg_success": "JPG scaricato correttamente.",
+  "legend_nodata": "Nessun dato",
   
   "colorbrewer_labels": {
     "Blues": "Blu monocromatico",
