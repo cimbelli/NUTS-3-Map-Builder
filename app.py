@@ -415,6 +415,9 @@ if file:
     
         elif method_key == "equal":
             classifier = mapclassify.EqualInterval(gdf_valid[val_col], k=k)
+        
+        elif method_key == "natural":
+            classifier = mapclassify.NaturalBreaks(gdf_valid[val_col], k=k)
     
         elif method_key == "std":
             classifier = mapclassify.StdMean(gdf_valid[val_col])
