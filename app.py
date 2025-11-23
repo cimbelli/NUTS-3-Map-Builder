@@ -505,72 +505,82 @@ if file:
         min_val = round(gdf[val_col].min(), 2)
         bounds = [min_val] + [round(b, 2) for b in bins]
 
-    if show_legend:
-    
-        # Numero di classi reali
-        num_classes = len(bounds) - 1
-    
-        # +1 per la classe NoData
-        total_rows = num_classes + 1
-    
-        # Altezza proporzionale al totale
-        legend_height = 0.026 * total_rows
-        top_y = 0.60
-    
-        legend_ax = ax.inset_axes(
-            [0.80, top_y - legend_height, 0.18, legend_height]
+if show_legend:
+    # numero di classi con dato
+    num_classes = len(bounds) - 1
+
+    # controlla se esistono poligoni senza dato
+    has_nodata = not gdf_nodata.empty
+
+    # righe totali in legenda (classi + eventuale NoData)
+    total_rows = num_classes + (1 if has_nodata else 0)
+
+    # altezza proporzionale alle righe reali
+    legend_height = 0.04 * total_rows   # un po' più alto per non tagliare l'ultima
+    top_y = 0.60
+
+    legend_ax = ax.inset_axes(
+        [0.80, top_y - legend_height, 0.18, legend_height]
+    )
+    legend_ax.axis("off")
+
+    # riquadro esterno
+    legend_ax.add_patch(
+        Rectangle(
+            (0, 0),
+            3,
+            total_rows,
+            facecolor="white",
+            edgecolor="black",
+            linewidth=1,
+            zorder=0,
         )
-        legend_ax.axis("off")
-    
-        # Riquadro legenda
+    )
+
+    # --- CLASSI CON DATO ---
+    cmap = cm.get_cmap(palette_key, num_classes)
+
+    for i in range(num_classes):
+        color = to_hex(cmap(i))
+
+        # riga dall'alto verso il basso:
+        # se c'è NoData, la riga 0 è riservata a NoData, quindi partiamo da total_rows-1
+        row_index_from_top = i  # 0 = classe più alta
+        y = total_rows - row_index_from_top - (1 if has_nodata else 0) - 0.8
+
+        label_text = f"{format_value(bounds[i])} – {format_value(bounds[i+1])}"
+
         legend_ax.add_patch(
             Rectangle(
-                (0, 0),
-                3,
-                total_rows,
-                facecolor="white",
+                (0.2, y),
+                0.7,
+                0.6,
+                facecolor=color,
                 edgecolor="black",
-                linewidth=1,
-                zorder=0,
+                linewidth=0.3,
+                zorder=1,
             )
         )
-    
-        # --- CLASSI NORMALI ---
-        for i in range(num_classes):
-            color = to_hex(cm.get_cmap(palette_key, num_classes)(i))
-            y = total_rows - i - 2 + 0.2   # spazio uniforme
-    
-            label_text = f"{format_value(bounds[i])} – {format_value(bounds[i+1])}"
-    
-            legend_ax.add_patch(
-                Rectangle(
-                    (0.2, y),
-                    0.7,
-                    0.6,
-                    facecolor=color,
-                    edgecolor="black",
-                    linewidth=0.3,
-                    zorder=1,
-                )
-            )
-            legend_ax.text(
-                1.3,
-                y + 0.3,
-                label_text,
-                va="center",
-                fontsize=7,
-                fontproperties=arial_font,
-                zorder=2,
-            )
-    
-        # --- NODATA ROW ---
-        nodata_y = 0.2 + 0.0   # ultima riga in basso
+        legend_ax.text(
+            1.3,
+            y + 0.3,
+            label_text,
+            va="center",
+            fontsize=7,
+            fontproperties=arial_font,
+            zorder=2,
+        )
+
+    # --- RIGA NODATA (solo se c'è) ---
+    if has_nodata:
+        nodata_y = 0.2  # ultima riga in basso
+
         legend_ax.add_patch(
             Rectangle(
                 (0.2, nodata_y),
                 0.7,
                 0.6,
-                facecolor="#D9D9D9",
+                facecolor=color_nodata,  # "#D9D9D9"
                 edgecolor="black",
                 linewidth=0.3,
                 zorder=1,
@@ -585,9 +595,10 @@ if file:
             fontproperties=arial_font,
             zorder=2,
         )
-    
-        legend_ax.set_xlim(0, 3)
-        legend_ax.set_ylim(0, total_rows)
+
+    legend_ax.set_xlim(0, 3)
+    legend_ax.set_ylim(0, total_rows)
+
 
 
     ax.axis("off")
