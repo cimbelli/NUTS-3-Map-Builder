@@ -473,8 +473,8 @@ if file:
     if inset_gdf is not None and not inset_gdf.empty:
         inset_gdf.plot(
             ax=ax,
-            color="black",
-            facecolor="white",
+            color="white",
+            edgecolor="white",
             linewidth=1,
             alpha=1.0,
         )
