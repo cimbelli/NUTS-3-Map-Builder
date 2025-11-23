@@ -506,30 +506,42 @@ if file:
         bounds = [min_val] + [round(b, 2) for b in bins]
 
     if show_legend:
-        legend_height = 0.026 * (k + 1)
+    
+        # Numero di classi reali
+        num_classes = len(bounds) - 1
+    
+        # +1 per la classe NoData
+        total_rows = num_classes + 1
+    
+        # Altezza proporzionale al totale
+        legend_height = 0.026 * total_rows
         top_y = 0.60
+    
         legend_ax = ax.inset_axes(
             [0.80, top_y - legend_height, 0.18, legend_height]
         )
         legend_ax.axis("off")
+    
+        # Riquadro legenda
         legend_ax.add_patch(
             Rectangle(
                 (0, 0),
                 3,
-                len(bounds) - 1,
+                total_rows,
                 facecolor="white",
                 edgecolor="black",
                 linewidth=1,
                 zorder=0,
             )
         )
-
-        for i in range(len(bounds) - 1):
-            color = to_hex(cm.get_cmap(palette_key, k)(i))
-            y = len(bounds) - i - 2 + 0.2
-            label_text = (
-                f"{format_value(bounds[i])} – {format_value(bounds[i+1])}"
-            )
+    
+        # --- CLASSI NORMALI ---
+        for i in range(num_classes):
+            color = to_hex(cm.get_cmap(palette_key, num_classes)(i))
+            y = total_rows - i - 2 + 0.2   # spazio uniforme
+    
+            label_text = f"{format_value(bounds[i])} – {format_value(bounds[i+1])}"
+    
             legend_ax.add_patch(
                 Rectangle(
                     (0.2, y),
@@ -550,9 +562,33 @@ if file:
                 fontproperties=arial_font,
                 zorder=2,
             )
-
+    
+        # --- NODATA ROW ---
+        nodata_y = 0.2 + 0.0   # ultima riga in basso
+        legend_ax.add_patch(
+            Rectangle(
+                (0.2, nodata_y),
+                0.7,
+                0.6,
+                facecolor="#D9D9D9",
+                edgecolor="black",
+                linewidth=0.3,
+                zorder=1,
+            )
+        )
+        legend_ax.text(
+            1.3,
+            nodata_y + 0.3,
+            T.get("legend_nodata", "No data"),
+            va="center",
+            fontsize=7,
+            fontproperties=arial_font,
+            zorder=2,
+        )
+    
         legend_ax.set_xlim(0, 3)
-        legend_ax.set_ylim(0, len(bounds) - 1)
+        legend_ax.set_ylim(0, total_rows)
+
 
     ax.axis("off")
     fig.subplots_adjust(left=0.06, right=0.94, top=0.92, bottom=0.08)
