@@ -487,7 +487,7 @@ if file:
                 row.get("name", ""),
                 ha="left",
                 va="top",
-                fontsize=4,
+                fontsize=3,
                 color="black",
                 zorder=5,
             )
